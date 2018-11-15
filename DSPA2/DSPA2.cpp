@@ -25,6 +25,7 @@ public:
 	int getSize();
 	int searchIndex(string textToSearch);
 	string searchByIndex(int index);
+	list sort(int dimension);
 };
 int list::getSize() {
 	int number = 0;
@@ -109,6 +110,31 @@ string list::searchByIndex(int index) {
 	}
 	return "";
 }
+list list::sort(int dimension) {
+	string* temp = NULL;
+	node* iterator = head;
+	temp = new string[dimension];//store each node into temp
+	for (int i = 0; i < dimension; ++i) {
+		temp[i] = iterator->name;
+		iterator = iterator->next;
+	}
+
+	for (int i = 0; i < dimension - 1; ++i) {//bubble sort
+		for (int j = 0; j < dimension - 1; ++j) {
+			if (temp[j] > temp[j + 1]) {
+				string tempStr = temp[j];
+				temp[j] = temp[j + 1];
+				temp[j + 1] = tempStr;
+			}
+		}
+	}
+
+	list newList;
+	for (int i = 0; i < dimension; i++) {
+		newList.insertEnd(temp[i]);
+	}
+	return newList;
+}
 
 void printRanks(double* ranks, int dimension);
 void insertEdge(double** graph, queue<string> in, queue<string> out, list unique, int numEdges);
@@ -117,7 +143,6 @@ void division(double** graph, int dimension);
 void multiplication(double** graph, int dimension, int score, double* ranks);
 void firstMultiplication(double** graph, int dimension, double* ranks);
 void finalPrint(double* ranks, list unique, int dimension);
-
 void printRanks(double* ranks, int dimension) {
 	for (int i = 0; i < dimension; i++){
 		cout << i + 1 << ". " << ranks[i] << endl;
@@ -199,8 +224,11 @@ void firstMultiplication(double** graph, int dimension, double* ranks) {
 
 void finalPrint(double* ranks, list unique, int dimension) {
 	int digit = 2;
+	double roundedNum = 0;
 	for (int i = 0; i < dimension; i++) {
 		cout << unique.searchByIndex(i) << " ";
+		//roundedNum = roundf(ranks[i] * 100) / 100;
+		//cout << roundedNum;
 		printf("%.2f", ranks[i]);
 		cout << endl;
 		//cout<< ranks[i] << "%.2f" << endl;
@@ -272,6 +300,7 @@ int main() {
 		}
 	}
 
+	uniqueNames = uniqueNames.sort(numDimension);
 	/*cout << endl;
 	cout << "unique" << endl;
 	cout << uniqueNames.searchByIndex(0) << endl;

@@ -143,28 +143,24 @@ void division(double** graph, int dimension);
 void multiplication(double** graph, int dimension, int score, double* ranks);
 void firstMultiplication(double** graph, int dimension, double* ranks);
 void finalPrint(double* ranks, list unique, int dimension);
+
 void printRanks(double* ranks, int dimension) {
-	for (int i = 0; i < dimension; i++){
+	for (int i = 0; i < dimension; i++) {
 		cout << i + 1 << ". " << ranks[i] << endl;
 	}
 }
-
 void insertEdge(double** graph, queue<string> in, queue<string> out, list unique, int numEdges) {
 	int inIndex = 0;//these two indexes will be obtained from the positions of the strings in unique
 	int outIndex = 0;
-	//cout << endl;
 	for (int i = 0; i < numEdges; i++) {
 		inIndex = unique.searchIndex(in.front());
 		outIndex = unique.searchIndex(out.front());
-		//cout <<"in " << in.front() << " out " << out.front() << endl;
 		in.pop();
 		out.pop();
 
 		graph[inIndex][outIndex] = 1;
 	}
-	//cout << endl;
 }
-
 void printGraph(double** graph, int dimension) {
 	for (int i = 0; i < dimension; i++) {
 		for (int j = 0; j < dimension; j++) {
@@ -174,7 +170,6 @@ void printGraph(double** graph, int dimension) {
 	}
 
 }
-
 void division(double** graph, int dimension) {
 	for (int i = 0; i < dimension; i++) {
 		int count = 0;
@@ -184,24 +179,20 @@ void division(double** graph, int dimension) {
 			}
 		}
 		for (int k = 0; k < dimension; k++) {
-			if(count != 0)
-			graph[k][i] = graph[k][i] / count;
+			if (count != 0)
+				graph[k][i] = graph[k][i] / count;
 		}
 	}
 }
-
 void multiplication(double** graph, int dimension, int score, double* ranks) {
 	queue<double> temp;
 	for (int i = 0; i < score; i++) {//power
 		for (int j = 0; j < dimension; j++) {//row
 			double sumRow = 0;
 			for (int k = 0; k < dimension; k++) {//column
-				//cout << j << "+" << k << " " << graph[j][k] << " " << ranks[k] << "! ";
 				sumRow += graph[j][k] * ranks[k];
 			}
 			temp.push(sumRow);
-			//cout << endl;
-			//cout << sumRow << endl;
 		}
 		for (int j = 0; j < dimension; j++) {
 			ranks[j] = temp.front();
@@ -209,7 +200,6 @@ void multiplication(double** graph, int dimension, int score, double* ranks) {
 		}
 	}
 }
-
 void firstMultiplication(double** graph, int dimension, double* ranks) {
 	for (int i = 0; i < dimension; i++) {
 		double sumRow = 0;
@@ -218,25 +208,18 @@ void firstMultiplication(double** graph, int dimension, double* ranks) {
 		}
 		sumRow /= dimension;
 
-		ranks[i] = sumRow;//fixme
+		ranks[i] = sumRow;
 	}
 }
-
 void finalPrint(double* ranks, list unique, int dimension) {
 	int digit = 2;
 	double roundedNum = 0;
 	for (int i = 0; i < dimension; i++) {
 		cout << unique.searchByIndex(i) << " ";
-		//roundedNum = roundf(ranks[i] * 100) / 100;
-		//cout << roundedNum;
 		printf("%.2f", ranks[i]);
 		cout << endl;
-		//cout<< ranks[i] << "%.2f" << endl;
 	}
 }
-
-
-
 
 int main() {
 	int numEdges, inVert, outVert;
@@ -301,39 +284,21 @@ int main() {
 	}
 
 	uniqueNames = uniqueNames.sort(numDimension);
-	/*cout << endl;
-	cout << "unique" << endl;
-	cout << uniqueNames.searchByIndex(0) << endl;
-	cout << uniqueNames.searchByIndex(1) << endl;
-	cout << uniqueNames.searchByIndex(2) << endl;
-	cout << uniqueNames.searchByIndex(3) << endl;
-	cout << uniqueNames.searchByIndex(4) << endl;*/
 
 	insertEdge(matrix, inQueue, outQueue, uniqueNames, numEdges);
-	/*printGraph(matrix, numDimension);*/
 	division(matrix, numDimension);
-	/*cout << endl;
-	printGraph(matrix, numDimension);*/
 
 	double* ranks = NULL;
 	ranks = new double[numDimension];//ranks stores the result after each cross product
 	for (int i = 0; i < numDimension; ++i) {
-		ranks[i] = 0;
+		ranks[i] = 1 / (double)numDimension;
 	}
 
-	firstMultiplication(matrix, numDimension, ranks);//cross products 1/size
-	//cout << endl;
-	//cout << "firstMulti" << endl;
-	/*printRanks(ranks, numDimension);
-*/
 	if (numScore > 1) {
-		multiplication(matrix, numDimension, numScore - 2, ranks);
+		firstMultiplication(matrix, numDimension, ranks);//cross products 1/size
 	}
+		multiplication(matrix, numDimension, numScore - 2, ranks);
 
-	/*cout << endl;
-	printRanks(ranks, numDimension);
-
-	cout << endl;*/
 	finalPrint(ranks, uniqueNames, numDimension);
 
 	for (int i = 0; i < numDimension; ++i) {//deletion
